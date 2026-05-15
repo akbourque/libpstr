@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # libpstr: A Modern UTF-8 String Library for C
 
 `libpstr` is a Pascal-style (length-prefixed) string library for C11, designed to bring the safety and ergonomics of modern languages like Rust to systems-level C development.
@@ -104,3 +105,7 @@ Bash
 
 This project is licensed under the MIT License - see the [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
 
+=======
+# libpstr
+A Modern UTF-8 String Library for C
+>>>>>>> dd5f723e3325da7691983e98ad98e105447f4264
