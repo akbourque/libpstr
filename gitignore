@@ -1,0 +1,6 @@
+*.o
+*.a
+*.so
+pstr_test
+test_io.txt
+.DS_Store
