@@ -953,7 +953,7 @@ static inline pstr_t* pstr_from_slice(pstr_slice_t slice) {
 }
 
 static inline size_t pstr_list_len(const pstr_list_t *list) {
-    return list ? list->vec.len : 0;
+    return list ? list->vec.len/PSTR_SLICE_SIZE : 0;
 }
 
 static inline void pstr_list_init(pstr_list_t *list) {

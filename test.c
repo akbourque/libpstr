@@ -18,6 +18,7 @@ void test_utilities();
 void test_adversarial();
 void test_adversarial_boundaries();
 void test_file_io();
+void test_pstr_list_complete(void);
 
 int main() {
     printf("Tests running...\n");
@@ -34,6 +35,7 @@ int main() {
     test_adversarial();
     test_adversarial_boundaries();
     test_file_io();
+    test_pstr_list_complete();
     printf("Testing complete.\n");
     return 0;
 }
@@ -513,3 +515,65 @@ void test_file_io() {
     printf("file I/O tests: PASSED\n");
 }
 
+void test_pstr_list_complete(void) {
+    printf("\nlist tests...\n");
+    pstr_list_t list;
+    
+    // 1. Test Initialization & Empty State
+    pstr.list.init(&list);
+    assert(pstr.list.len(&list) == 0 && "List should initialize with an element count of 0");
+    
+    // 2. Setup Test Slices
+    pstr_slice_t slice_a = { .ptr = "alpha", .len = 5 };
+    pstr_slice_t slice_b = { .ptr = "beta",  .len = 4 };
+    pstr_slice_t slice_c = { .ptr = "gamma", .len = 5 };
+    
+    // 3. Test Sequential Pushing & Length Tracking
+    pstr.list.push(&list, slice_a);
+    assert(pstr.list.len(&list) == 1 && "Length should be 1 after pushing first item");
+    
+    pstr.list.push(&list, slice_b);
+    assert(pstr.list.len(&list) == 2 && "Length should be 2 after pushing second item");
+    
+    pstr.list.push(&list, slice_c);
+    assert(pstr.list.len(&list) == 3 && "Length should be 3 after pushing third item");
+    
+    // 4. Test Element Retrieval & Data Integrity
+    pstr_slice_t res_a = pstr.list.get(&list, 0);
+    assert(res_a.len == slice_a.len && "Index 0 slice length mismatch");
+    assert(memcmp(res_a.ptr, slice_a.ptr, slice_a.len) == 0 && "Index 0 data content corrupted");
+    
+    pstr_slice_t res_b = pstr.list.get(&list, 1);
+    assert(res_b.len == slice_b.len && "Index 1 slice length mismatch");
+    assert(memcmp(res_b.ptr, slice_b.ptr, slice_b.len) == 0 && "Index 1 data content corrupted");
+    
+    pstr_slice_t res_c = pstr.list.get(&list, 2);
+    assert(res_c.len == slice_c.len && "Index 2 slice length mismatch");
+    assert(memcmp(res_c.ptr, slice_c.ptr, slice_c.len) == 0 && "Index 2 data content corrupted");
+
+    // 5. Stress Test: Trigger Internal Vector Growth/Reallocation
+    // Pushing 50 elements forces the underlying pstr_vec_t to grow past its initial capacity
+    size_t initial_count = pstr.list.len(&list);
+    size_t stress_additions = 50;
+    pstr_slice_t stress_slice = { .ptr = "stress_test_element_validation", .len = 30 };
+    
+    for (size_t i = 0; i < stress_additions; i++) {
+        pstr.list.push(&list, stress_slice);
+    }
+    
+    // Verify total elements counted correctly after stress run
+    assert(pstr.list.len(&list) == (initial_count + stress_additions) && "List failed to track length accurately through growth reallocations");
+    
+    // Verify data at the very end of the grown list is still perfectly valid
+    pstr_slice_t deep_check = pstr.list.get(&list, list.vec.len / sizeof(pstr_slice_t) - 1);
+    assert(deep_check.len == stress_slice.len && "Grown vector tail element length corruption discovered");
+    assert(memcmp(deep_check.ptr, stress_slice.ptr, stress_slice.len) == 0 && "Grown vector tail data alignment mismatch");
+
+    // 6. Test Free & Safe Memory Reclamation
+    pstr.list.free(&list);
+    
+    // Safety check: ensure underlying vector tracking structures are completely cleared
+    assert(list.vec.data == NULL && "List memory release failed to nullify vector data buffer pointer");
+    assert(list.vec.len == 0 && "List memory release failed to zero-out data tracking metrics");
+    printf("List tests: PASSED\n");
+}
