@@ -5,12 +5,13 @@
  * UTF-8 integrity and developer ergonomics.
  * * @section usage_sec Basic Usage
  * @code
- * #include "libpstr.h"
- * * int main() {
- * pstr_t *s = pstr.from_cstr("Hello 🚀");
- * printf("Length in chars: %zu\n", pstr.utf8.len(s));
- * pstr.free(s);
- * return 0;
- * }
+ *  #include "libpstr.h"
+ *
+ *  int main() {
+ *      pstr_t *s = pstr.from_cstr("Hello 🚀");
+ *      printf("Length in chars: %zu\n", pstr.utf8.len(s));
+ *      pstr.free(s);
+ *      return 0;
+ *  }
  * @endcode
  */
