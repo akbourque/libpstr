@@ -63,3 +63,8 @@ make static
 
 ## 📄 License
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+* **Gemini (Google)** - Acted as an AI pair programmer for porting logic,
+structural code lowering, and expanding test coverage.

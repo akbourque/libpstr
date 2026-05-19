@@ -1,13 +1,13 @@
 # --- libpstr Makefile ---
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -std=c11 -fPIC
+CFLAGS = -Wall -Wextra -Werror -std=c11 -fPIC -Isrc
 DEBUG_FLAGS = -g -O1 -fsanitize=address -fno-omit-frame-pointer
 RELEASE_FLAGS = -O3 -flto
 LDFLAGS = -shared
 
 # Targets
 LIB_NAME = libpstr
-SRC = panic.c pstr_utf8.c pstr_vec.c libpstr.c
+SRC = src/panic.c src/pstr_utf8.c src/pstr_vec.c src/libpstr.c
 OBJ = $(SRC:.c=.o)
 
 all: static shared
@@ -26,8 +26,8 @@ test: clean
 	./pstr_test
 
 # Compile individual object files
-%.o: %.c
+src/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f *.o *.so *.a pstr_test
+	rm -f src/*.o *.so *.a pstr_test
