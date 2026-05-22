@@ -1,0 +1,61 @@
+---
+# The baseline style to inherit from
+BasedOnStyle: LLVM
+
+# --- Core Indentation & Width ---
+ColumnLimit: 100
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+# --- Brace Wrapping (K&R / One True Brace Style) ---
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel:  false
+  AfterClass:      false
+  AfterControlStatement: Never
+  AfterEnum:       false
+  AfterFunction:   false
+  AfterNamespace:  false
+  AfterObjCDeclaration: false
+  AfterStruct:     false
+  AfterUnion:      false
+  AfterExternBlock: false
+  BeforeCatch:     false
+  BeforeElse:      false
+  BeforeLambdaBody: false
+  BeforeWhile:     false
+  IndentBraces:    false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+
+# --- Pointer & Reference Alignment ---
+# Formats as `int *ptr` instead of `int* ptr` (Standard C style)
+PointerAlignment: Right
+
+# --- Argument & Parameter Alignment ---
+# When a line breaks, align the new line with the open bracket:
+# my_func(arg1,
+#         arg2);
+AlignAfterOpenBracket: Align
+AlignOperands: Align
+AlignTrailingComments: true
+
+# --- Function Declaration / Definition Formatting ---
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+# --- Preprocessor Directives ---
+IndentPPDirectives: AfterHash
+
+# --- Includes ---
+# Prevents clang-format from alphabetically sorting your includes, 
+# which can sometimes break careful dependency ordering in C headers.
+SortIncludes: false
+...
