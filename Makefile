@@ -1,4 +1,4 @@
-# --- libpstr Makefile ---
+# --- libpstr Modernized Module Makefile ---
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -std=c11 -fPIC -Isrc
 DEBUG_FLAGS = -g -O1 -fsanitize=address -fno-omit-frame-pointer
@@ -7,7 +7,7 @@ LDFLAGS = -shared
 
 # Targets
 LIB_NAME = libpstr
-SRC = src/panic.c src/pstr_utf8.c src/pstr_vec.c src/libpstr.c
+SRC = src/panic.c src/libpstr.c
 OBJ = $(SRC:.c=.o)
 
 all: static shared
@@ -20,9 +20,9 @@ static: $(OBJ)
 shared: $(OBJ)
 	$(CC) $(LDFLAGS) -o $(LIB_NAME).so $(OBJ)
 
-# Build for testing with ASan
+# 🚀 The Test Rule: Runs 'clean' first, then compiles from 'src/tests/' and runs it
 test: clean
-	$(CC) $(CFLAGS) $(DEBUG_FLAGS) -DENABLE_PANIC_TESTING $(SRC) test.c -o pstr_test
+	$(CC) $(CFLAGS) $(DEBUG_FLAGS) -DENABLE_PANIC_TESTING $(SRC) src/tests/test_libpstr.c -o pstr_test
 	./pstr_test
 
 # Compile individual object files
@@ -30,4 +30,4 @@ src/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f src/*.o *.so *.a pstr_test
+	rm -f src/*.o src/tests/*.o *.so *.a pstr_test
