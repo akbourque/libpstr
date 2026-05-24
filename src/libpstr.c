@@ -909,6 +909,21 @@ static bool slice_ends_with(libpstr_slice_t slice, const char *suffix) {
     return memcmp(slice.ptr + (slice.len - slen), suffix, slen) == 0;
 }
 
+static libpstr_status_t builder_append_slice(libpstr_builder_t* b, libpstr_slice_t slice) {
+    if (slice.ptr == NULL || slice.len == 0) {
+        return LIBPSTR_OK; // Nothing to append
+    }
+    // Seamlessly pass it to your existing robust append logic
+    return builder_append(b, slice.ptr, slice.len); 
+}
+
+static libpstr_slice_t slice_from_pstr(const libpstr_pstr_t *s) {
+    if (s == NULL) {
+        return (libpstr_slice_t){ .ptr = NULL, .len = 0 };
+    }
+    return (libpstr_slice_t){ .ptr = s->buf, .len = s->len };
+}
+
 static const char* version_impl(void) {
     return LIBPSTR_VERSION;
 }
@@ -939,6 +954,7 @@ const libpstr_module_t libpstr = {
         .split_once = pstr_split_once,
     },
     .slice = {
+        .from_pstr = slice_from_pstr,
         .substring = slice_substring,
         .find_cstr = slice_find_cstr,
         .find_pstr = slice_find_pstr,
@@ -957,6 +973,7 @@ const libpstr_module_t libpstr = {
         .append = builder_append,
         .append_cstr = builder_append_cstr,
         .append_pstr = builder_append_pstr,
+        .append_slice = builder_append_slice,
         .appendf = builder_appendf,
         .vappendf = builder_vappendf,
         .append_utf8 = builder_append_utf8,

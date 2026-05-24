@@ -238,6 +238,13 @@ typedef struct {
 
 /** @brief Namespace for high-speed, zero-allocation non-owning slice operations. */
 typedef struct {
+     /**
+     * @brief Creates a full-length slice view of a p-string.
+     * @param s The source p-string.
+     * @return A libpstr_slice_t referencing the entire string.
+     */
+    libpstr_slice_t  (*from_pstr)(const libpstr_pstr_t *s);   
+
     /**
      * @brief Extracts a view of a substring without allocation.
      * @param s The source string.
@@ -367,6 +374,14 @@ typedef struct {
      * @return LIBPSTR_OK on success.
      */
     libpstr_status_t (*append_pstr)(libpstr_builder_t* b, libpstr_pstr_t* str);
+
+    /**
+     * @brief Appends a slice to a builder's buffer.
+     * @param b The string builder.
+     * @param slice The slice to append.
+     * @return LIBPSTR_OK on success.
+     */
+    libpstr_status_t (*append_slice)(libpstr_builder_t* b, libpstr_slice_t slice);
 
     /**
      * @brief Appends a formatted string to a builder's buffer.
