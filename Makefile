@@ -22,7 +22,7 @@ shared: $(OBJ)
 
 # 🚀 The Test Rule: Runs 'clean' first, then compiles from 'src/tests/' and runs it
 test: clean
-	$(CC) $(CFLAGS) $(DEBUG_FLAGS) -DENABLE_PANIC_TESTING $(SRC) src/tests/test_libpstr.c -o pstr_test
+	$(CC) $(CFLAGS) $(DEBUG_FLAGS) -DENABLE_PANIC_TESTING $(SRC) tests/test_libpstr.c -o pstr_test
 	./pstr_test
 
 # Compile individual object files
@@ -30,4 +30,4 @@ src/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f src/*.o src/tests/*.o *.so *.a pstr_test
+	rm -f src/*.o tests/*.o *.so *.a pstr_test

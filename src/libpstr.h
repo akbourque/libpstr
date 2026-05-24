@@ -16,7 +16,7 @@
 #include "panic.h"
 
 /** @brief libpstr official production release indicator. */
-#define LIBPSTR_VERSION "0.1.2"
+#define LIBPSTR_VERSION "0.1.3"
 
 /** @brief Size of stack buffer used for Small Buffer Optimization. */
 #define LIBPSTR_BUILDER_SBO 512
