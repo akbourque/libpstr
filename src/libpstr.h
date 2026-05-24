@@ -173,6 +173,15 @@ typedef struct {
     libpstr_pstr_t* (*read_from_file_lossy)(const char* path);
 
     /**
+     * @brief Extracts a non-owning slice from a p-string without allocation.
+     * @param s The source string.
+     * @param start The byte offset to begin extraction.
+     * @param count The number of bytes to include in the substring.
+     * @return A libpstr_slice_t.
+     */
+     libpstr_slice_t (*substring)(const libpstr_pstr_t *s, size_t start, size_t count);
+
+    /**
      * @brief Transforms a string in place by applying a transform function to each code point.
      * @param self The source string.
      * @param transform The transform function: uint32_t transform(uint32_t).
@@ -246,13 +255,13 @@ typedef struct {
     libpstr_slice_t  (*from_pstr)(const libpstr_pstr_t *s);   
 
     /**
-     * @brief Extracts a view of a substring without allocation.
-     * @param s The source string.
+     * @brief Extracts a sub-slice from an existing slice without allocation.
+     * @param slice The source slice.
      * @param start The byte offset to begin extraction.
-     * @param count The number of bytes to include in the substring.
+     * @param count The number of bytes to include in the sub-slice.
      * @return A libpstr_slice_t.
      */
-    libpstr_slice_t  (*substring)(const libpstr_pstr_t *s, size_t start, size_t count);
+    libpstr_slice_t (*substring)(libpstr_slice_t slice, size_t start, size_t count);
 
     /**
      * @brief Searches for a cstr in a p-string.

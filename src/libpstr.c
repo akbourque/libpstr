@@ -723,22 +723,22 @@ static bool pstr_split_once(const libpstr_pstr_t *s, const char *delim, libpstr_
  * 📦 SUB-NAMESPACE SECTION 6: ZERO-ALLOCATION SLICES (libpstr.slice)
  * ========================================================================= */
 
-static libpstr_slice_t slice_substring(const libpstr_pstr_t *s, size_t start, size_t len) {
-    if (!s || start > s->len) {
-        PANIC("libpstr.slice.substring: parent pointer NULL or start position out of bounds");
-    }
-    
-    // 🛑 CRITICAL FIX: Trigger a defensive panic if requested length goes out of bounds
-    if (start + len > s->len) {
-        PANIC("libpstr.slice.substring: requested length extends past allocation bounds threshold");
-    }
-    
-    if (!is_char_boundary(s, start) || !is_char_boundary(s, start + len)) {
-        PANIC("libpstr.slice.substring: logic boundary failure, coordinates fall inside multi-byte character sequences");
-    }
-    
-    return (libpstr_slice_t){ .ptr = s->buf + start, .len = len };
-}
+// static libpstr_slice_t slice_substring(const libpstr_pstr_t *s, size_t start, size_t len) {
+//     if (!s || start > s->len) {
+//         PANIC("libpstr.slice.substring: parent pointer NULL or start position out of bounds");
+//     }
+//
+//     // 🛑 CRITICAL FIX: Trigger a defensive panic if requested length goes out of bounds
+//     if (start + len > s->len) {
+//         PANIC("libpstr.slice.substring: requested length extends past allocation bounds threshold");
+//     }
+//
+//     if (!is_char_boundary(s, start) || !is_char_boundary(s, start + len)) {
+//         PANIC("libpstr.slice.substring: logic boundary failure, coordinates fall inside multi-byte character sequences");
+//     }
+//
+//     return (libpstr_slice_t){ .ptr = s->buf + start, .len = len };
+// }
 
 static libpstr_slice_t slice_find_cstr(const libpstr_pstr_t *s, const char *needle) {
     if (!s || !needle) return (libpstr_slice_t){NULL, 0};
@@ -924,6 +924,41 @@ static libpstr_slice_t slice_from_pstr(const libpstr_pstr_t *s) {
     return (libpstr_slice_t){ .ptr = s->buf, .len = s->len };
 }
 
+static libpstr_slice_t pstr_substring(const libpstr_pstr_t *s, size_t start, size_t count) {
+    if (!s || start > s->len) {
+        PANIC("libpstr.pstr.substring: parent pointer NULL or start position out of bounds");
+    }
+
+    if (start + count > s->len) {
+        PANIC("libpstr.pstr.substring: requested length extends past allocation bounds threshold");
+    }
+
+    // Relying on your internal UTF-8 validation
+    if (!is_char_boundary(s, start) || !is_char_boundary(s, start + count)) {
+        PANIC("libpstr.pstr.substring: logic boundary failure, coordinates fall inside multi-byte character sequences");
+    }
+
+    return (libpstr_slice_t){ .ptr = s->buf + start, .len = count };
+}
+
+static libpstr_slice_t slice_substring(libpstr_slice_t slice, size_t start, size_t count) {
+    if (!slice.ptr || start > slice.len) {
+        PANIC("libpstr.slice.substring: parent pointer NULL or start position out of bounds");
+    }
+
+    if (start + count > slice.len) {
+        PANIC("libpstr.slice.substring: requested length extends past allocation bounds threshold");
+    }
+
+    // Using the buffer-specific char boundary checker since we don't have a p-string header
+    if (!is_char_boundary_at_ptr(slice.ptr, slice.len, start) || 
+        !is_char_boundary_at_ptr(slice.ptr, slice.len, start + count)) {
+        PANIC("libpstr.slice.substring: logic boundary failure, coordinates fall inside multi-byte character sequences");
+    }
+
+    return (libpstr_slice_t){ .ptr = slice.ptr + start, .len = count };
+}
+
 static const char* version_impl(void) {
     return LIBPSTR_VERSION;
 }
@@ -944,6 +979,7 @@ const libpstr_module_t libpstr = {
         .format_v = pstr_format_v,
         .read_from_file = pstr_read_from_file,
         .read_from_file_lossy = pstr_read_from_file_lossy,
+        .substring = pstr_substring,
         .transform = pstr_transform,
         .to_uppercase = pstr_to_uppercase,
         .to_lowercase = pstr_to_lowercase,
